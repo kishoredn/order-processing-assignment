@@ -9,7 +9,7 @@ sys.path.insert(0, str(project_root))
 
 from app.services import storage, processor
 from app.config import settings
-from app.logging import configure_logging, get_logger
+from app.logutil import configure_logging, get_logger
 
 # Ensure centralized logging is configured when running the script
 configure_logging()

@@ -3,9 +3,9 @@
 Lightweight local e-commerce order pipeline example.
 
 What this repo contains
-- FastAPI endpoints to expose user/global stats and invalid orders.
+- FastAPI endpoints to expose user/global stats, leaderboards, and invalid orders.
 - A worker that consumes order messages from SQS (Localstack) and processes them.
-- Redis-only storage primitives for aggregates + invalid message channel.
+- Redis-only storage primitives for aggregates, leaderboards, and invalid message channel.
 - Small unit tests and helper scripts to replay invalids / populate SQS.
 
 Status (what's implemented)
@@ -14,7 +14,7 @@ Status (what's implemented)
 - Validation & processing logic (`app/services/processor.py`).
 - FastAPI app and routes (`app/main.py`, `app/routes.py`) including POST `/orders/reprocess`.
 - SQS worker (`app/worker.py`) and helper replay script (`scripts/replay_invalids.py`).
-- Unit tests for processor and worker (mocked storage/boto3).
+- Unit tests for processor and worker (mocked storage/boto3). Leaderboard logic with Redis ZSETs.
 
 Prerequisites
 - Python 3.11+
@@ -53,11 +53,21 @@ python -m uvicorn app.main:app --reload --port 8000
 python .\app\main.py
 ```
 
+
 Endpoints
 - GET /users/{user_id}/stats -> { user_id, order_count, total_spend }
 - GET /stats/global -> { total_orders, total_revenue }
 - GET /orders/invalid?limit=50 -> list of recent invalid entries
 - POST /orders/reprocess -> accept corrected order JSON and attempt to reprocess it
+- GET /stats/top-users?by=spend&n=10&offset=0 -> Top-N users by spend (default n=10, max=100)
+- GET /stats/top-users?by=orders&n=10&offset=0 -> Top-N users by order count (default n=10, max=100)
+Leaderboard
+
+- Leaderboards are implemented using Redis ZSETs:
+	- `leaderboard:spend` ranks users by total spend
+	- `leaderboard:orders` ranks users by order count
+- Endpoints allow querying top-N users by spend or orders, with pagination support (offset).
+- Leaderboards update automatically as new orders are processed.
 
 Run the worker (consumes SQS)
 

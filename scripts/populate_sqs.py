@@ -1,6 +1,7 @@
 import argparse
 import json
 import random
+from datetime import datetime
 import uuid
 import boto3
 from botocore.exceptions import ClientError
@@ -12,7 +13,7 @@ project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
 
 from app.config import settings
-from app.logging import configure_logging, get_logger
+from app.logutil import configure_logging, get_logger
 
 configure_logging()
 logger = get_logger(__name__)
@@ -39,7 +40,7 @@ def get_or_create_queue_url(sqs_client, queue_name):
             raise
 
 def generate_valid_order():
-    """Generates a random, valid order."""
+    """Generates a random, valid order with extra fields."""
     user_id = f"user_{random.randint(1, 100)}"
     order_id = str(uuid.uuid4())
     items = []
@@ -48,30 +49,39 @@ def generate_valid_order():
         quantity = random.randint(1, 3)
         price_per_unit = round(random.uniform(10.0, 200.0), 2)
         item_total = quantity * price_per_unit
-        items.append({"item_id": f"item_{random.randint(1, 50)}", "quantity": quantity, "price_per_unit": price_per_unit})
+        items.append({
+            "product_id": f"P{random.randint(1, 99):03d}",
+            "quantity": quantity,
+            "price_per_unit": price_per_unit
+        })
         order_value += item_total
-    
-    return {
+
+    # Add extra fields
+    order = {
         "user_id": user_id,
         "order_id": order_id,
         "order_value": round(order_value, 2),
-        "items": items
+        "order_timestamp": datetime.utcnow().isoformat() + "Z",
+        "items": items,
+        "shipping_address": f"{random.randint(100,999)} Main St, Springfield",
+        "payment_method": random.choice(["CreditCard", "PayPal", "BankTransfer"])
     }
+    return order
 
 def generate_invalid_order():
-    """Generates a random, invalid order."""
+    """Generates a random, invalid order with extra fields."""
     order_type = random.choice(['missing_field', 'mismatch_value', 'bad_items'])
     order = generate_valid_order()
 
     if order_type == 'missing_field':
-        del order['order_value']
+        if 'order_value' in order:
+            del order['order_value']
     elif order_type == 'mismatch_value':
         order['order_value'] += 10.5
     elif order_type == 'bad_items':
         # Mess up the price of one item
         if order['items']:
             order['items'][0]['price_per_unit'] = "not_a_number"
-            
     return order
 
 def populate_queue(queue_url, num_valid, num_invalid):
