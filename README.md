@@ -1,6 +1,7 @@
 # Order Processing (local)
 
 Lightweight local e-commerce order pipeline example.
+Design Link : [Open Diagram in Draw.io](https://lucid.app/lucidchart/df9364e0-f659-41b1-821b-96f9d11142e5/edit?viewport_loc=-255%2C-283%2C3085%2C1476%2CuDhu79GQZG25P&invitationId=inv_afcfce1a-7503-4289-bae1-44443b4df227)
 
 What this repo contains
 - FastAPI endpoints to expose user/global stats, leaderboards, and invalid orders.
@@ -8,7 +9,8 @@ What this repo contains
 - Redis-only storage primitives for aggregates, leaderboards, and invalid message channel.
 - Small unit tests and helper scripts to replay invalids / populate SQS.
 
-Status (what's implemented)
+Status
+
 - Config loader (`app/config.py`) with sensible defaults and `.env` support.
 - Redis storage primitives (`app/services/storage.py`).
 - Validation & processing logic (`app/services/processor.py`).
@@ -20,7 +22,8 @@ Prerequisites
 - Python 3.11+
 - Redis (for full integration)
 - Localstack (optional, for local SQS)
-- Recommended: create and activate a venv before installing dependencies
+
+Recommendation for better view: create and activate a venv before installing dependencies
 
 Environment variables (.env)
 - AWS_ENDPOINT_URL=http://localhost:4566
@@ -35,7 +38,7 @@ Environment variables (.env)
 
 Install dependencies
 
-Windows (PowerShell):
+Windows (PowerShell) - since i built in a windows device:
 
 ```powershell
 python -m pip install --upgrade pip setuptools wheel
@@ -52,7 +55,6 @@ Run the API
 python -m uvicorn app.main:app --reload --port 8000
 python .\app\main.py
 ```
-
 
 Endpoints
 - GET /users/{user_id}/stats -> { user_id, order_count, total_spend }
