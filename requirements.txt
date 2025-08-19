@@ -1,4 +1,4 @@
-fastapi>=0.95.0
+fastapi>=0.110.0
 uvicorn>=0.22.0
 boto3>=1.28.0
 redis>=4.5.0

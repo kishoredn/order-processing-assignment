@@ -1,7 +1,8 @@
 # Order Processing (local)
 
 Lightweight local e-commerce order pipeline example.
-Design Link : [Open Diagram in Draw.io](https://lucid.app/lucidchart/df9364e0-f659-41b1-821b-96f9d11142e5/edit?viewport_loc=-255%2C-283%2C3085%2C1476%2CuDhu79GQZG25P&invitationId=inv_afcfce1a-7503-4289-bae1-44443b4df227)
+
+Design Link : [Open Diagram in LucidChart](https://lucid.app/lucidchart/df9364e0-f659-41b1-821b-96f9d11142e5/edit?viewport_loc=-255%2C-283%2C3085%2C1476%2CuDhu79GQZG25P&invitationId=inv_afcfce1a-7503-4289-bae1-44443b4df227)
 
 What this repo contains
 - FastAPI endpoints to expose user/global stats, leaderboards, and invalid orders.
@@ -71,14 +72,14 @@ Leaderboard
 - Endpoints allow querying top-N users by spend or orders, with pagination support (offset).
 - Leaderboards update automatically as new orders are processed.
 
+Populate SQS (example)
+- A `scripts/populate_sqs.py` helper may exist; run it to create sample valid/invalid orders and send to SQS (requires Localstack).
+
 Run the worker (consumes SQS)
 
 ```powershell
 python .\app\worker.py
 ```
-
-Populate SQS (example)
-- A `scripts/populate_sqs.py` helper may exist; run it to create sample valid/invalid orders and send to SQS (requires Localstack).
 
 Replay invalid orders
 

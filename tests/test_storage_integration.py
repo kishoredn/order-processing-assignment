@@ -15,7 +15,7 @@ def test_storage_integration_update_get():
     # Use a unique user id to avoid clashing with other tests
     user_id = f"it-{os.getpid()}"
     # Clean state
-    r = storage.get_redis()
+    r = storage.get_redis_client()
     r.delete(f"user:{user_id}")
 
     storage.update_user_stats(user_id, 12.34)

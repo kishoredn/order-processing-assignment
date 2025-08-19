@@ -2,7 +2,7 @@ import json
 
 from types import SimpleNamespace
 
-from app.worker import run_worker
+from app.worker import run_worker_for_test
 
 
 class FakeSQSClient:
@@ -27,7 +27,7 @@ def test_worker_processes_message(monkeypatch):
     messages = [{"ReceiptHandle": "r1", "Body": json.dumps({"user_id": "u1", "id": "o1", "order_value": 10.0})}]
     fake = FakeSQSClient(messages)
 
-    def fake_boto_client(service_name, endpoint_url=None, region_name=None):
+    def fake_boto_client(service_name, endpoint_url=None, region_name=None, aws_access_key_id=None, aws_secret_access_key=None):
         assert service_name == "sqs"
         return fake
 
@@ -42,7 +42,7 @@ def test_worker_processes_message(monkeypatch):
     monkeypatch.setattr("app.worker.process_order", fake_process)
 
     # run worker for a small number of polls
-    run_worker(sleep_seconds=0, max_polls=2)
+    run_worker_for_test(max_polls=2)
 
     assert "order" in called
     assert fake.deleted == ["r1"]

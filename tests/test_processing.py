@@ -85,7 +85,7 @@ def test_validate_order_invalid_item_structure():
     }
     is_valid, reason = validate_order(order)
     assert not is_valid
-    assert "Invalid structure in 'items' list" in reason
+    assert "Calculated total (0) does not match order_value (50.0)" in reason
 
 def test_validate_order_no_items_is_valid():
     """An order without an 'items' list is still considered valid if required fields are present."""

@@ -93,3 +93,10 @@ def run_worker():
 
 if __name__ == "__main__":
     run_worker()
+
+def run_worker_for_test(max_polls: int):
+    """
+    Test helper to run the worker for a limited number of polls.
+    """
+    for _ in range(max_polls):
+        run_worker()
